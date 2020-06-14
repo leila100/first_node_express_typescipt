@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 
 import { Todo } from "../models/todo";
 
-const TODOS: Todo[] = [];
+let TODOS: Todo[] = [];
 
 export const createTodo: RequestHandler = (req, res, next) => {
   const { text } = req.body as { text: string };
@@ -22,4 +22,10 @@ export const updateTodo: RequestHandler<{ id: string }> = (req, res, next) => {
   if (todoIndex < 0) throw new Error("Wrong todo id");
   TODOS[todoIndex] = new Todo(TODOS[todoIndex].id, text);
   res.json({ message: "todo updated.", todo: TODOS[todoIndex] });
+};
+
+export const deleteTodo: RequestHandler<{ id: string }> = (req, res, next) => {
+  const todoId = req.params.id;
+  TODOS = TODOS.filter((todo) => todo.id !== todoId);
+  res.status(200).json({ message: "Todo deleted." });
 };
